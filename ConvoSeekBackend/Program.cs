@@ -1,7 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using ConvoSeekBackend.Data;
+using ConvoSeekBackend.Services;
+using ConvoSeekBackend.Repositories;
 var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("ConvoSeekBackendContext");
+
+builder.Services.AddDbContext<ConvoSeekBackendContext>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.Configure<OpenAIOptions>(builder.Configuration.GetSection("OpenAI"));
+builder.Services.AddScoped<IEmbeddingService, OpenAIEmbeddingService>();
+builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 
 var app = builder.Build();
 
