@@ -29,13 +29,11 @@ namespace ConvoSeekBackend.Services
             _client = new EmbeddingClient(_model, _apiKey);        
         }
 
-        public async Task GenerateEmbeddings()
+        public async Task<ReadOnlyMemory<float>> GenerateEmbedding(string inputText)
         {
-            ClientResult<OpenAIEmbedding> returnValue = await _client.GenerateEmbeddingAsync("Hello World!");
+            ClientResult<OpenAIEmbedding> embeddings = await _client.GenerateEmbeddingAsync(inputText);
 
-            var floats = returnValue.Value.ToFloats();
-
-            throw new NotImplementedException();
+            return embeddings.Value.ToFloats();
         }
 
         /*

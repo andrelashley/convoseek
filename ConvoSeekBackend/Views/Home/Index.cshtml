@@ -5,4 +5,31 @@
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Get Started</button>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Log in to ConvoSeek</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="emailInput" placeholder="Email Address" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="passwordInput" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-4">Log In</button>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <span>Don't have an account? <a href="/signup" class="text-primary">Register</a></span>
+            </div>
+        </div>
+    </div>
 </div>

@@ -11,6 +11,8 @@ namespace ConvoSeekBackend.Models
         [Required]
         public string Text { get; set; }
 
+        public string? EncryptedText { get; set; }
+
         [Column(TypeName = "vector(1536)")]
         public Vector? Embedding { get; set; }
     }

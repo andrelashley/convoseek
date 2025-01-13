@@ -2,6 +2,6 @@
 {
     public interface IEmbeddingService
     {
-        public Task GenerateEmbeddings();
+        Task<ReadOnlyMemory<float>> GenerateEmbedding(string inputText);
     }
 }

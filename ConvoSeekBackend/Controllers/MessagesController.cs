@@ -4,6 +4,7 @@ using ConvoSeekBackend.Data;
 using ConvoSeekBackend.Models;
 using ConvoSeekBackend.Services;
 using ConvoSeekBackend.Repositories;
+using ConvoSeekBackend.Helpers;
 
 namespace ConvoSeekBackend.Controllers
 {
@@ -12,15 +13,18 @@ namespace ConvoSeekBackend.Controllers
         private readonly ConvoSeekBackendContext _context;
         private readonly IMessagesRepository _messagesRepository;
         private readonly IEmbeddingService _embeddingService;
+        private readonly IConfiguration _configuration;
 
         public MessagesController(
             ConvoSeekBackendContext context,
             IMessagesRepository messagesRepository,
-            IEmbeddingService embeddingService)
+            IEmbeddingService embeddingService,
+            IConfiguration configuration)
         {
             _context = context;
             _messagesRepository = messagesRepository;
             _embeddingService = embeddingService;
+            _configuration = configuration;
         }
 
         // GET: Messages
@@ -44,7 +48,15 @@ namespace ConvoSeekBackend.Controllers
                 return NotFound();
             }
 
-            return View(message);
+            // return View(message);
+            // Retrieve the encryption key from the configuration
+            var encryptionKey = _configuration["Encryption:Key"];
+            var encryptionHelper = new EncryptionHelper(encryptionKey!);
+
+            // Encrypt the message text
+            var decryptedText = encryptionHelper.Decrypt(message.EncryptedText!);
+
+            return Ok(decryptedText);
         }
 
         // GET: Messages/Create
@@ -62,8 +74,23 @@ namespace ConvoSeekBackend.Controllers
         {
             if (ModelState.IsValid)
             {
+                var embeddings = await _embeddingService.GenerateEmbedding(message.Text);
+
+                // Convert ReadOnlyMemory<float> to float[]
+                var embeddingArray = embeddings.ToArray();
+
+                // Create a Pgvector.Vector from the array
+                message.Embedding = new Pgvector.Vector(embeddingArray);
+
+                // Retrieve the encryption key from the configuration
+                var encryptionKey = _configuration["Encryption:Key"];
+                var encryptionHelper = new EncryptionHelper(encryptionKey!);
+
+                // Encrypt the message text
+                message.EncryptedText = encryptionHelper.Encrypt(message.Text);
+
                 _context.Add(message);
-                await _embeddingService.GenerateEmbeddings();
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
