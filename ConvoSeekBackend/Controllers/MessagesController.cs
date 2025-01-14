@@ -16,17 +16,20 @@ namespace ConvoSeekBackend.Controllers
         private readonly IMessagesRepository _messagesRepository;
         private readonly IEmbeddingService _embeddingService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<MessagesController> _logger;
 
         public MessagesController(
             ConvoSeekBackendContext context,
             IMessagesRepository messagesRepository,
             IEmbeddingService embeddingService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogger<MessagesController> logger)
         {
             _context = context;
             _messagesRepository = messagesRepository;
             _embeddingService = embeddingService;
             _configuration = configuration;
+            _logger = logger;
         }
 
         // GET: Messages
@@ -96,9 +99,26 @@ namespace ConvoSeekBackend.Controllers
         [HttpGet("Messages/Search")]
         public async Task<IActionResult> Search([FromQuery] string q = "who is suffering from dementia?")
         {
-            var answer = await _messagesRepository.SearchAsync(q);
+            try
+            {
+                var answer = await _messagesRepository.SearchAsync(q);
+                return Ok(answer);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError($"Search error: {ex.Message}");
+                return RedirectToAction(nameof(Error));
+            }
+            catch (Exception ex) 
+            {
+                _logger.LogError($"Unexpected error: {ex.Message}");
+                return RedirectToAction(nameof(Error));
+            }
+        }
 
-            return Ok(answer);
+        public IActionResult Error()
+        {
+            return View();
         }
 
         // GET: Messages/Edit/5
