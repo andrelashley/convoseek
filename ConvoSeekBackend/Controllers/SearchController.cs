@@ -10,20 +10,20 @@ using Microsoft.AspNetCore.Authorization;
 namespace ConvoSeekBackend.Controllers
 {
     [Authorize]
-    public class MessagesController : Controller
+    public class SearchController : Controller
     {
         private readonly ConvoSeekBackendContext _context;
         private readonly IMessagesRepository _messagesRepository;
         private readonly IEmbeddingService _embeddingService;
         private readonly IConfiguration _configuration;
-        private readonly ILogger<MessagesController> _logger;
+        private readonly ILogger<SearchController> _logger;
 
-        public MessagesController(
+        public SearchController(
             ConvoSeekBackendContext context,
             IMessagesRepository messagesRepository,
             IEmbeddingService embeddingService,
             IConfiguration configuration,
-            ILogger<MessagesController> logger)
+            ILogger<SearchController> logger)
         {
             _context = context;
             _messagesRepository = messagesRepository;
@@ -70,34 +70,32 @@ namespace ConvoSeekBackend.Controllers
             return View();
         }
 
-        // POST: Messages/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MessageId,Text")] Message message)
-        {
-            if (ModelState.IsValid)
-            {
-                var embeddings = await _embeddingService.GenerateEmbedding(message.Text);
-                var embeddingArray = embeddings.ToArray();
-                message.Embedding = new Pgvector.Vector(embeddingArray);
+        
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("MessageId,Text")] Message message)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var embeddings = await _embeddingService.GenerateEmbedding(message.Text);
+        //        var embeddingArray = embeddings.ToArray();
+        //        message.Embedding = new Pgvector.Vector(embeddingArray);
 
-                var encryptionKey = _configuration["Encryption:Key"];
-                var encryptionHelper = new EncryptionHelper(encryptionKey!);
-                message.EncryptedText = encryptionHelper.Encrypt(message.Text);
-                message.Text = string.Empty;
+        //        var encryptionKey = _configuration["Encryption:Key"];
+        //        var encryptionHelper = new EncryptionHelper(encryptionKey!);
+        //        message.EncryptedText = encryptionHelper.Encrypt(message.Text);
+        //        message.Text = string.Empty;
 
-                _context.Add(message);
-                await _context.SaveChangesAsync();
+        //        _context.Add(message);
+        //        await _context.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
-            }
-            return View(message);
-        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(message);
+        //}
 
         [HttpGet("Messages/Search")]
-        public async Task<IActionResult> Search([FromQuery] string q = "who is suffering from dementia?")
+        public async Task<IActionResult> Search([FromQuery] string q = "")
         {
             try
             {
@@ -107,12 +105,12 @@ namespace ConvoSeekBackend.Controllers
             catch (InvalidOperationException ex)
             {
                 _logger.LogError($"Search error: {ex.Message}");
-                return RedirectToAction(nameof(Error));
+                return StatusCode(500);
             }
             catch (Exception ex) 
             {
                 _logger.LogError($"Unexpected error: {ex.Message}");
-                return RedirectToAction(nameof(Error));
+                return StatusCode(500);
             }
         }
 
@@ -121,57 +119,7 @@ namespace ConvoSeekBackend.Controllers
             return View();
         }
 
-        // GET: Messages/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var message = await _context.Messages.FindAsync(id);
-            if (message == null)
-            {
-                return NotFound();
-            }
-            return View(message);
-        }
-
-        // POST: Messages/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("MessageId,Text")] Message message)
-        {
-            if (id != message.MessageId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(message);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MessageExists(message.MessageId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(message);
-        }
-
+                
         // GET: Messages/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {

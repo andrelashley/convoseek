@@ -1,0 +1,51 @@
+﻿@model IEnumerable<ConvoSeekBackend.Models.Message>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h2>Search Messages</h2>
+
+<div id="search-container">
+    <input type="text" id="search-query" placeholder="Enter your query..." class="form-control" />
+    <button id="search-btn" class="btn btn-primary mt-2">Search</button>
+</div>
+
+<div id="search-result" class="mt-4">
+    <h4>Answer:</h4>
+    <div id="answer-box" class="alert alert-info" style="display: none;"></div>
+    <div id="error-box" class="alert alert-danger" style="display: none;"></div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#search-btn').on('click', function () {
+                const query = $('#search-query').val().trim();
+
+                if (!query) {
+                    $('#answer-box').hide();
+                    $('#error-box').text('Please enter a query.').show();
+                    return;
+                }
+
+                // Clear previous results
+                $('#answer-box').hide();
+                $('#error-box').hide();
+
+                $.ajax({
+                    url: '/Messages/Search',
+                    method: 'GET',
+                    data: { q: query },
+                    success: function (response) {
+                        $('#answer-box').text(response).show();
+                    },
+                    error: function (xhr) {
+                        const errorMessage = xhr.responseJSON?.error || 'An error occurred while processing your request.';
+                        $('#error-box').text(errorMessage).show();
+                    }
+                });
+            });
+        });
+    </script>
+}

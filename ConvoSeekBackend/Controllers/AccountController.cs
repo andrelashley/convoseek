@@ -23,7 +23,7 @@ namespace ConvoSeekBackend.Controllers
         {
             if (User!.Identity!.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Messages");
+                return RedirectToAction("Index", "Search");
             }
 
             return View();
@@ -44,7 +44,7 @@ namespace ConvoSeekBackend.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Index", "Messages");
+                        return RedirectToAction("Index", "Search");
                     }
                 }
             }
@@ -58,7 +58,7 @@ namespace ConvoSeekBackend.Controllers
         {
             if (User!.Identity!.IsAuthenticated)
             {
-                return RedirectToAction("Index", "Messages");
+                return RedirectToAction("Index", "Search");
             }
 
             return View();
@@ -87,7 +87,7 @@ namespace ConvoSeekBackend.Controllers
                     if (result.Succeeded)
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return RedirectToAction("Index", "Messages");
+                        return RedirectToAction("Index", "Search");
                     }
                 }
 
