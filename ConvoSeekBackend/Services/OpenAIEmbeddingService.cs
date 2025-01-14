@@ -9,24 +9,24 @@ namespace ConvoSeekBackend.Services
     {
         private readonly EmbeddingClient _client;
         private readonly string _apiKey;
-        private readonly string _model;
+        private readonly string _embeddingModel;
 
         public OpenAIEmbeddingService(IOptions<OpenAIOptions> options)
         {
             _apiKey = options.Value.ApiKey;
-            _model = options.Value.EmbeddingModel;
+            _embeddingModel = options.Value.EmbeddingModel;
 
             if (string.IsNullOrWhiteSpace(_apiKey))
             {
                 throw new ArgumentNullException(nameof(_apiKey), "OpenAI API key is not configured.");
             }
 
-            if (string.IsNullOrWhiteSpace(_model))
+            if (string.IsNullOrWhiteSpace(_embeddingModel))
             {
                 throw new ArgumentNullException(nameof(_apiKey), "Embedding model is not configured.");
             }
 
-            _client = new EmbeddingClient(_model, _apiKey);        
+            _client = new EmbeddingClient(_embeddingModel, _apiKey);        
         }
 
         public async Task<ReadOnlyMemory<float>> GenerateEmbedding(string inputText)
@@ -35,33 +35,5 @@ namespace ConvoSeekBackend.Services
 
             return embeddings.Value.ToFloats();
         }
-
-        /*
-         * public class EmbeddingGenerator(Uri endpoint, AzureKeyCredential credentials, string deploymentName)
-{
-    // This is for people using OpenAI directly like me.
-    // If you are using OpenAI with Azure, the 2 params endpoint and credentials
-    // will be what you need
-    private readonly OpenAIClient OpenAiClient = new("YOUR_OPENAI_API_KEY");
-
-    public async Task<Vector> GenerateEmbeddingAsync(string text)
-    {
-        var embeddingOptions = new EmbeddingsOptions
-        {
-            // deploymentName is the model you want to use.
-            // e.g: text-embedding-ada-002
-            DeploymentName = deploymentName,
-            Input = { text }
-        };
-
-        var response = await OpenAiClient.GetEmbeddingsAsync(embeddingOptions);
-
-        if (response.Value.Data.Count > 0)
-            return new Vector(response.Value.Data[0].Embedding.ToArray());
-        throw new Exception("Failed to generate embedding.");
-    }
-} 
-         * 
-         */
     }
 }

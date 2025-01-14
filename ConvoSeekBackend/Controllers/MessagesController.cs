@@ -5,9 +5,11 @@ using ConvoSeekBackend.Models;
 using ConvoSeekBackend.Services;
 using ConvoSeekBackend.Repositories;
 using ConvoSeekBackend.Helpers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ConvoSeekBackend.Controllers
 {
+    [Authorize]
     public class MessagesController : Controller
     {
         private readonly ConvoSeekBackendContext _context;
@@ -75,36 +77,28 @@ namespace ConvoSeekBackend.Controllers
             if (ModelState.IsValid)
             {
                 var embeddings = await _embeddingService.GenerateEmbedding(message.Text);
-
-                // Convert ReadOnlyMemory<float> to float[]
                 var embeddingArray = embeddings.ToArray();
-
-                // Create a Pgvector.Vector from the array
                 message.Embedding = new Pgvector.Vector(embeddingArray);
 
-                // Retrieve the encryption key from the configuration
                 var encryptionKey = _configuration["Encryption:Key"];
                 var encryptionHelper = new EncryptionHelper(encryptionKey!);
-
-                // Encrypt the message text
                 message.EncryptedText = encryptionHelper.Encrypt(message.Text);
+                message.Text = string.Empty;
 
                 _context.Add(message);
-
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(message);
         }
 
         [HttpGet("Messages/Search")]
-        public async Task<IActionResult> Search([FromQuery] string q = "")
+        public async Task<IActionResult> Search([FromQuery] string q = "who is suffering from dementia?")
         {
-            // await _messagesRepository.SearchAsync(q);
+            var answer = await _messagesRepository.SearchAsync(q);
 
-
-
-            return Ok();
+            return Ok(answer);
         }
 
         // GET: Messages/Edit/5

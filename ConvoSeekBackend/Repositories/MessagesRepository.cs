@@ -1,66 +1,49 @@
 ﻿using ConvoSeekBackend.Data;
-using ConvoSeekBackend.Models;
+using ConvoSeekBackend.Helpers;
 using ConvoSeekBackend.Services;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
+using Pgvector.EntityFrameworkCore;
 
 namespace ConvoSeekBackend.Repositories
 {
     public class MessagesRepository : IMessagesRepository
     {
         private readonly ConvoSeekBackendContext _context;
+        private readonly IEmbeddingService _embeddingService;
+        private readonly IChatService _chatService;
+        private readonly IConfiguration _configuration;
 
-        public MessagesRepository(ConvoSeekBackendContext context)
+        public MessagesRepository(
+            ConvoSeekBackendContext context,
+            IEmbeddingService embeddingService,
+            IChatService chatService,
+            IConfiguration configuration)
         {
             _context = context;
+            _embeddingService = embeddingService;
+            _chatService = chatService;
+            _configuration = configuration;
         }
 
-        public async Task<List<string>> SearchAsync(string q)
+        public async Task<string> SearchAsync(string q)
         {
+            var queryEmbeddingArray = await _embeddingService.GenerateEmbedding(q);
+            var queryEmbedding = new Pgvector.Vector(queryEmbeddingArray);
+
             var results = await _context.Messages
-                .Where(m => EF.Functions.ILike(m.Text, $"%{q}%"))
+                .OrderBy(m => m.Embedding.L2Distance(queryEmbedding))
+                .Take(10)
                 .ToListAsync();
 
-            // return results;
+            var encryptionKey = _configuration["Encryption:Key"];
+            var encryptionHelper = new EncryptionHelper(encryptionKey!);
 
-            throw new NotImplementedException();
+            var decryptedResults = results
+                .Select(m => encryptionHelper.Decrypt(m.EncryptedText))
+                .ToList();
+
+            var rvl = await _chatService.AnswerQuestion(q, decryptedResults);
+            return rvl;
         }
-
-
-        /*
-         * 
-         * public async Task<List<Post>> SearchAsync(string searchText)
-    {
-        // this threshold is kinda like the accuracy of the search.
-        // I would recommend to start with 0.5, which shoud
-        // give you something. Normally 0.5 gives you too
-        // much info. Tweaking it to the sweet spot is a fun experience.
-        // it is different for any data.
-        const double threshold = 0.50;
-
-        // Generate embedding for the search text using OpenAI
-        var queryEmbedding = await embeddingGenerator.GenerateEmbeddingAsync(searchText);
-
-        // find neighbors in vector space and only take 5.
-        // it also orders based on title embedding to show relevance of the order
-        var posts = await db.Posts
-            .Where(post => post.TitleEmbedding!.L2Distance(queryEmbedding) < threshold ||
-                           post.ContentEmbedding!.L2Distance(queryEmbedding) < threshold)
-            .OrderBy(post => post.TitleEmbedding!.L2Distance(queryEmbedding) < threshold)
-            .Take(5)
-            .ToListAsync();
-
-        return posts;
-    } 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         */
     }
 }

@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ConvoSeekBackend.Models;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace ConvoSeekBackend.Data
 {
-    public class ConvoSeekBackendContext : DbContext
+    public class ConvoSeekBackendContext : IdentityDbContext<User>
     {
         private readonly IConfiguration _configuration;
 
