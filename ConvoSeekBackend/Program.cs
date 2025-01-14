@@ -4,6 +4,7 @@ using ConvoSeekBackend.Services;
 using ConvoSeekBackend.Repositories;
 using ConvoSeekBackend.Models;
 using Microsoft.AspNetCore.Identity;
+using ConvoSeekBackend.Settings;
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("ConvoSeekBackendContext");
@@ -27,6 +28,8 @@ builder.Services.AddDefaultIdentity<User>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
 builder.Services.Configure<OpenAIOptions>(builder.Configuration.GetSection("OpenAI"));
 builder.Services.AddScoped<IEmbeddingService, OpenAIEmbeddingService>();

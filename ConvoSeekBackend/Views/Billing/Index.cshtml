@@ -1,5 +1,17 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    var publishableKey = ViewData["PublishableKey"] as string;
 }
+
+<button id="checkout-button">Subscribe</button>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe("@publishableKey");
+
+    document.getElementById("checkout-button").addEventListener("click", async () => {
+        const response = await fetch("/api/payment/create-checkout-session", { method: "POST" });
+        const { sessionId } = await response.json();
+
+        stripe.redirectToCheckout({ sessionId: sessionId });
+    });
+</script>
