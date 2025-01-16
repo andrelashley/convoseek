@@ -5,6 +5,7 @@ using ConvoSeekBackend.Repositories;
 using ConvoSeekBackend.Models;
 using Microsoft.AspNetCore.Identity;
 using ConvoSeekBackend.Settings;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("ConvoSeekBackendContext");
@@ -25,12 +26,12 @@ builder.Services.AddDefaultIdentity<User>(options =>
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ConvoSeekBackendContext>();
 
-
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Configure Stripe settings
 builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
+// Configure OpenAI services
 builder.Services.Configure<OpenAIOptions>(builder.Configuration.GetSection("OpenAI"));
 builder.Services.AddScoped<IEmbeddingService, OpenAIEmbeddingService>();
 builder.Services.AddScoped<IChatService, OpenAIChatService>();
@@ -38,12 +39,11 @@ builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseHsts(); // Use HSTS for production
 }
 
 // app.UseHttpsRedirection();
@@ -51,7 +51,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",

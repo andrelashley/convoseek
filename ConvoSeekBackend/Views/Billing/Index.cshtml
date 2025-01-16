@@ -1,17 +1,61 @@
-﻿@{
-    var publishableKey = ViewData["PublishableKey"] as string;
-}
+﻿@model SubscriptionViewModel
 
-<button id="checkout-button">Subscribe</button>
+<style>
+    button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<h1>Manage Your Subscription</h1>
+
+@if (Model.IsSubscriptionActive)
+{
+    <p>Your subscription is active. Subscription ID: <strong>@Model.SubscriptionId</strong></p>
+    <button id="cancel-subscription-button">Cancel Subscription</button>
+}
+else
+{
+    <p>You do not have an active subscription.</p>
+    <button id="checkout-button">Subscribe for $30 USD per Month</button>
+}
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-    const stripe = Stripe("@publishableKey");
+    const stripe = Stripe("@Model.PublishableKey");
 
-    document.getElementById("checkout-button").addEventListener("click", async () => {
+    document.getElementById("checkout-button")?.addEventListener("click", async () => {
         const response = await fetch("/api/payment/create-checkout-session", { method: "POST" });
         const { sessionId } = await response.json();
 
-        stripe.redirectToCheckout({ sessionId: sessionId });
+        stripe.redirectToCheckout({ sessionId });
+    });
+
+    document.getElementById("cancel-subscription-button")?.addEventListener("click", async () => {
+        const subscriptionId = "@Model.SubscriptionId";
+
+        const response = await fetch("/api/payment/cancel-subscription", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ subscriptionId })
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(result.message);
+            location.reload(); // Refresh the page to reflect changes
+        } else {
+            alert(`Error: ${result.error}`);
+        }
     });
 </script>

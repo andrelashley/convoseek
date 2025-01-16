@@ -1,5 +1,6 @@
 ﻿using ConvoSeekBackend.Models;
 using ConvoSeekBackend.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -98,6 +99,7 @@ namespace ConvoSeekBackend.Controllers
             return View();
         }
 
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

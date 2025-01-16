@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ConvoSeekBackend.Data;
-using ConvoSeekBackend.Models;
 using ConvoSeekBackend.Services;
 using ConvoSeekBackend.Repositories;
 using ConvoSeekBackend.Helpers;
