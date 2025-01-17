@@ -117,7 +117,7 @@ namespace ConvoSeekBackend.Controllers
                 var canceledSubscription = service.Cancel(subscription.Id, options);
 
                 // Update user subscription details in the database
-                currentUser.SubscriptionId = string.Empty; // Clear subscription ID
+                currentUser.SubscriptionId = null; // Clear subscription ID
                 currentUser.IsSubscriptionActive = false;
                 await _userManager.UpdateAsync(currentUser); // Persist changes
 

@@ -7,8 +7,8 @@ namespace ConvoSeekBackend.Models
     {
         public string Handle { get; set; } = string.Empty;
         public bool IsSubscriptionActive { get; set; }
-        public string SubscriptionId { get; set; } = string.Empty;
-        public string CustomerId { get; set; } = string.Empty;
+        public string? SubscriptionId { get; set; }
+        public string? CustomerId { get; set; }
         public DateTimeOffset? CustomerCreatedAt { get; set; }
     }
 }
