@@ -1,5 +1,6 @@
 ﻿using ConvoSeekBackend.Data;
 using ConvoSeekBackend.Helpers;
+using ConvoSeekBackend.Models;
 using ConvoSeekBackend.Services;
 using Microsoft.EntityFrameworkCore;
 using Pgvector.EntityFrameworkCore;
@@ -28,7 +29,7 @@ namespace ConvoSeekBackend.Repositories
             _logger = logger;
         }
 
-        public async Task<string> SearchAsync(string q)
+        public async Task<string> SearchAsync(string q, User user)
         {
             try
             {
@@ -36,6 +37,7 @@ namespace ConvoSeekBackend.Repositories
                 var queryEmbedding = new Pgvector.Vector(queryEmbeddingArray);
 
                 var results = await _context.Messages
+                    .Where(m => m.UserId == user.Id)
                     .OrderBy(m => m.Embedding.L2Distance(queryEmbedding))
                     .Take(10)
                     .ToListAsync();

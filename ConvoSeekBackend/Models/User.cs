@@ -9,6 +9,7 @@ namespace ConvoSeekBackend.Models
         public bool IsSubscriptionActive { get; set; }
         public string? SubscriptionId { get; set; }
         public string? CustomerId { get; set; }
+        public ICollection<Message> Messages{ get; set; } = new List<Message>();
         public DateTimeOffset? CustomerCreatedAt { get; set; }
     }
 }

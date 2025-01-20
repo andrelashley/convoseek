@@ -4,6 +4,6 @@ namespace ConvoSeekBackend.Repositories
 {
     public interface IMessagesRepository
     {
-        Task<string> SearchAsync(string q);
+        Task<string> SearchAsync(string q, User user);
     }
 }

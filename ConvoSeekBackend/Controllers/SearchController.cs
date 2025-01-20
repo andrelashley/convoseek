@@ -5,6 +5,8 @@ using ConvoSeekBackend.Services;
 using ConvoSeekBackend.Repositories;
 using ConvoSeekBackend.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using ConvoSeekBackend.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace ConvoSeekBackend.Controllers
 {
@@ -16,19 +18,22 @@ namespace ConvoSeekBackend.Controllers
         private readonly IEmbeddingService _embeddingService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<SearchController> _logger;
+        private readonly UserManager<User> _userManager;
 
         public SearchController(
             ConvoSeekBackendContext context,
             IMessagesRepository messagesRepository,
             IEmbeddingService embeddingService,
             IConfiguration configuration,
-            ILogger<SearchController> logger)
+            ILogger<SearchController> logger,
+            UserManager<User> userManager)
         {
             _context = context;
             _messagesRepository = messagesRepository;
             _embeddingService = embeddingService;
             _configuration = configuration;
             _logger = logger;
+            _userManager = userManager;
         }
 
         [HttpGet("Index")]
@@ -39,7 +44,9 @@ namespace ConvoSeekBackend.Controllers
         {
             try
             {
-                var answer = await _messagesRepository.SearchAsync(q);
+                var currentUser = await _userManager.GetUserAsync(User);
+
+                var answer = await _messagesRepository.SearchAsync(q, currentUser!);
                 return Ok(answer);
             }
             catch (InvalidOperationException ex)

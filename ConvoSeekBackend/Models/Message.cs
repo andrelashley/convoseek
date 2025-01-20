@@ -15,5 +15,8 @@ namespace ConvoSeekBackend.Models
 
         [Column(TypeName = "vector(1536)")]
         public Vector? Embedding { get; set; }
+        public string? UserId { get; set; }
+        public User? User { get; set; } = null!;
+
     }
 }

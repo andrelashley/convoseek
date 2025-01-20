@@ -5,11 +5,14 @@ using ConvoSeekBackend.Models;
 using ConvoSeekBackend.Repositories;
 using ConvoSeekBackend.Services;
 using ConvoSeekBackend.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace ConvoSeekBackend.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UploadsController : ControllerBase
@@ -19,19 +22,22 @@ namespace ConvoSeekBackend.Controllers
         private readonly IEmbeddingService _embeddingService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<UploadsController> _logger;
+        private readonly UserManager<User> _userManager;
 
         public UploadsController(
             ConvoSeekBackendContext context,
             ILogger<UploadsController> logger,
             IEmbeddingService embeddingService,
             IMessagesRepository messagesRepository,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            UserManager<User> userManager)
         {
             _context = context;
             _messagesRepository = messagesRepository;
             _embeddingService = embeddingService;
             _configuration = configuration;
             _logger = logger;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -108,6 +114,7 @@ namespace ConvoSeekBackend.Controllers
                     string concatenatedText = $"{vm.Sender}|{vm.Text}";
                     message.EncryptedText = encryptionHelper.Encrypt(concatenatedText);
                     message.Text = vm.Text;
+                    message.UserId = (await _userManager.GetUserAsync(User))!.Id;
 
                     messageEntities.Add(message);
                 }
