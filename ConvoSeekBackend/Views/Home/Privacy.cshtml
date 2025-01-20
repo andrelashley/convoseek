@@ -1,6 +1,36 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
+
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<p>At ConvoSeek, your privacy and the security of your data are our top priorities. We understand the importance of keeping your conversations private and secure, and we’ve taken several measures to ensure your data is handled responsibly and with care. Below, we explain how we collect, process, and protect your information.</p>
+
+<h2>Data Collection</h2>
+<ul>
+    <li><strong>Uploads:</strong> When you upload files, such as WhatsApp or Facebook Messenger data, we parse the content directly in your browser where possible. Parsed messages are securely sent to our servers for processing.</li>
+    <li><strong>Temporary Storage:</strong> We do not store the uploaded files. Once the messages are parsed and processed, the original file is discarded.</li>
+</ul>
+
+<h2>Data Security</h2>
+<p>We employ robust security measures to protect your data at every step of the process:</p>
+<ul>
+    <li><strong>Encryption at Rest:</strong> All data stored in our Managed Database on DigitalOcean is encrypted at rest using LUKS (Linux Unified Key Setup), ensuring that your data is safeguarded even when it’s not actively being used.</li>
+    <li><strong>Encryption in Transit:</strong> Data is transmitted securely over HTTPS to protect your information from interception during transfer.</li>
+    <li><strong>Message Encryption:</strong> Before storing your parsed messages, we use industry-standard encryption to securely encrypt the content. Only encrypted data is saved to our database.</li>
+    <li><strong>Discarding Plaintext Data:</strong> After processing your uploaded data, we immediately discard the plaintext messages to further enhance security and reduce risk.</li>
+</ul>
+
+<h2>AI Processing</h2>
+<p>We use AI-powered embeddings to process and search your messages. This process is designed to extract semantic meaning while maintaining your privacy. The AI generates numerical representations (embeddings) of your messages, which are stored securely and do not contain readable content.</p>
+
+<h2>No File Storage</h2>
+<p>We respect your privacy by ensuring that your uploaded files are never stored on our servers. Once the messages are parsed and processed, the original file is immediately discarded, leaving no trace behind.</p>
+
+<h2>Your Privacy Matters</h2>
+<p>We are committed to protecting your data and never sharing it with third parties. Your data is used solely to provide the services offered by ConvoSeek, and we take every step to ensure it remains private and secure.</p>
+
+<h2>Contact Us</h2>
+<p>If you have any questions about our privacy practices or how we handle your data, please don't hesitate to contact us at <a href="mailto:support@convoseek.com">support@convoseek.com</a>.</p>
+
+<p>Your trust is important to us, and we are committed to maintaining the highest standards of privacy and security. Thank you for using ConvoSeek!</p>

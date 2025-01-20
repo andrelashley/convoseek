@@ -34,7 +34,7 @@
                 $('#error-box').hide();
 
                 $.ajax({
-                    url: '/Messages/Search',
+                    url: '/Search/Query',
                     method: 'GET',
                     data: { q: query },
                     success: function (response) {
