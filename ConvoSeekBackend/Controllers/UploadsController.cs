@@ -53,9 +53,11 @@ namespace ConvoSeekBackend.Controllers
 
             foreach (var message in messages)
             {
+                var sender = string.IsNullOrWhiteSpace(message.Author) ? "System" : message.Author;
+
                 var vm = new MessageViewModel
                 {
-                    Sender = message.Author,
+                    Sender = sender,
                     Text = message.Message
                 };
 
@@ -102,8 +104,9 @@ namespace ConvoSeekBackend.Controllers
                     }
 
                     Message message = new();
-                   
-                    message.EncryptedText = encryptionHelper.Encrypt(vm.Text);
+
+                    string concatenatedText = $"{vm.Sender}|{vm.Text}";
+                    message.EncryptedText = encryptionHelper.Encrypt(concatenatedText);
                     message.Text = vm.Text;
 
                     messageEntities.Add(message);
