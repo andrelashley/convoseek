@@ -14,8 +14,13 @@
             <label asp-for="File" class="control-label"></label>
             <input id="File" name="File" type="file" class="form-control" style="display: none;" />
             <span asp-validation-for="File" class="text-danger"></span>
-            <button id="UploadButton" type="button" class="btn btn-primary">Upload</button>
         </div>
+
+        <!-- WhatsApp Upload Button -->
+        <button id="WhatsAppUploadButton" type="button" class="btn btn-primary">Import WhatsApp Data</button>
+
+        <!-- Facebook Messenger Upload Button -->
+        <button id="FacebookUploadButton" type="button" class="btn btn-secondary">Import Facebook Messenger Data</button>
     </form>
 </div>
 <div class="progress">
@@ -28,14 +33,21 @@
 @section Scripts {
     <script src="~/lib/whatsapp-chat-parser/dist/index.global.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/whatsapp-chat-parser/dist/index.global.js"></script>
-
     <script>
         const fileTag = document.getElementById("File");
-        const uploadButton = document.getElementById("UploadButton");
+        const whatsappUploadButton = document.getElementById("WhatsAppUploadButton");
+        const facebookUploadButton = document.getElementById("FacebookUploadButton");
         const progressBar = document.getElementsByClassName("progress-bar")[0];
 
-        uploadButton.addEventListener('click', () => {
+        let dataSource = ""; // To track the data source: "whatsapp" or "facebook"
+
+        whatsappUploadButton.addEventListener('click', () => {
+            dataSource = "whatsapp";
+            fileTag.click();
+        });
+
+        facebookUploadButton.addEventListener('click', () => {
+            dataSource = "facebook";
             fileTag.click();
         });
 
@@ -46,24 +58,52 @@
                 return;
             }
 
-            // Parse the file locally
             try {
-                const text = await file.text(); // Read the file content as text
-                const messages = whatsappChatParser.parseString(text); // Parse the WhatsApp chat
-                console.log("Parsed messages:", messages);
+
+                const validExtensions = dataSource === "whatsapp" ? ['txt'] : ['json'];
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                if (!validExtensions.includes(fileExtension)) {
+                    alert(`Invalid file type. Please upload a ${dataSource === "whatsapp" ? "WhatsApp" : "Facebook"} file.`);
+                    return;
+                }
+
+                let parsedMessages = null;
+
+                if (dataSource === "whatsapp") {
+                    const text = await file.text(); // Read the file content as text
+                    parsedMessages = whatsappChatParser.parseString(text); // Parse the WhatsApp chat
+
+                } else if (dataSource === "facebook") {
+                    const text = await file.text(); // Read the JSON file as text
+                    const facebookData = JSON.parse(text); // Parse the JSON content
+
+                    // Transform Facebook JSON to match MessageDto structure
+                    parsedMessages = facebookData.messages.map(msg => ({
+                        Author: msg.senderName,
+                        Message: msg.text,
+                        Date: msg.timestamp ? new Date(msg.timestamp) : null // Convert Unix timestamp to Date
+                    }));
+                }
+
+                if (!parsedMessages) {
+                    throw new Error("Failed to parse messages.");
+                }
 
                 // Send the parsed messages to the server
-                const jsonMessages = JSON.stringify(messages);
+                const jsonMessages = JSON.stringify(parsedMessages);
                 const xhr = new XMLHttpRequest();
                 xhr.upload.addEventListener('progress', e => {
                     const progress = Math.round((e.loaded / e.total) * 100);
                     progressBar.style.width = progress + '%';
                 });
-                xhr.open('POST', '/api/uploads', true); // Adjust the API endpoint as needed
+
+                // Use the query parameter to specify the data source
+                xhr.open('POST', `/api/uploads?source=${dataSource}`, true);
                 xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.onload = () => {
                     if (xhr.status === 200) {
                         alert("Messages uploaded successfully!");
+                        progressBar.style.width = '0%'; // Reset progress bar
                     } else {
                         alert("Failed to upload messages. Please try again.");
                         console.error(xhr.responseText);
@@ -74,10 +114,9 @@
                 };
                 xhr.send(jsonMessages);
             } catch (error) {
-                console.error("Error parsing file:", error);
-                alert("Failed to parse the file. Ensure it's a valid WhatsApp export.");
+                console.error("Error processing file:", error);
+                alert(`Failed to process the file. Ensure it's a valid ${dataSource === "whatsapp" ? "WhatsApp" : "Facebook Messenger"} export.`);
             }
         });
     </script>
-
 }

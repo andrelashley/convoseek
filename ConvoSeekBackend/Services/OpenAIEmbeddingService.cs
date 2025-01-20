@@ -55,5 +55,31 @@ namespace ConvoSeekBackend.Services
                 throw; // Re-throw to allow higher layers to handle it.
             }
         }
+
+        public async Task<List<ReadOnlyMemory<float>>> GenerateEmbeddings(List<string> inputText)
+        {
+            try
+            {
+                var embeddings = await _client.GenerateEmbeddingsAsync(inputText);
+
+                if (embeddings == null || embeddings.Value == null)
+                {
+                    _logger.LogWarning("Embedding generation returned null for input: {InputText}", inputText);
+                    throw new InvalidOperationException("Failed to generate embedding.");
+                }
+
+                return embeddings.Value.Select(v => v.ToFloats()).ToList();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "HTTP request error while generating embedding for input: {InputText}", inputText);
+                throw new Exception("A network error occurred while generating the embedding. Please try again later.", ex);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while generating embedding for input: {InputText}", inputText);
+                throw; // Re-throw to allow higher layers to handle it.
+            }
+        }
     }
 }
