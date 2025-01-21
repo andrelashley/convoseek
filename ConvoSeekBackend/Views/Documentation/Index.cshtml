@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Documentation";
+}
+
+<h1 class="mt-4">Documentation</h1>
+
+<div class="container mt-5">
+    <h2>Uploading Messages</h2>
+    <p>
+        ConvoSeek allows you to upload message data from both Facebook Messenger and WhatsApp. Below are detailed instructions for preparing and uploading your data:
+    </p>
+
+    <h3>Step 1: Export Your Data</h3>
+    <p>
+        Follow these official guides to export your conversations:
+    </p>
+    <ul>
+        <li>
+            <a href="https://www.facebook.com/help/messenger-app/677912386869109/?helpref=related_articles" target="_blank">
+                How to Download Your Data for Facebook Messenger
+            </a>
+        </li>
+        <li>
+            <a href="https://faq.whatsapp.com/1180414079177245/?locale=et_EE&cms_platform=android" target="_blank">
+                How to Export Conversations for WhatsApp
+            </a>
+        </li>
+    </ul>
+
+    <h3>Step 2: Prepare Your Files</h3>
+    <p>
+        After exporting your data, you’ll receive compressed files (e.g., a ZIP file). You need to extract these files before uploading them to ConvoSeek. Here’s how to handle the extracted files:
+    </p>
+    <ul>
+        <li>
+            <strong>Facebook Messenger:</strong> You’ll see a list of JSON files, one for each conversation. Select the specific file for the conversation you wish to upload.
+        </li>
+        <li>
+            <strong>WhatsApp:</strong> You’ll receive a text file for each conversation you export. Upload the text file directly to ConvoSeek.
+        </li>
+    </ul>
+
+    <h3>Step 3: Upload Your Files</h3>
+    <p>
+        Go to the <strong>Upload Messages</strong> page on ConvoSeek and select the appropriate file for uploading. Ensure that the file matches the format specified for Facebook Messenger (JSON) or WhatsApp (TXT).
+    </p>
+
+    <h3>Step 4: Start Searching</h3>
+    <p>
+        Once your data has been successfully uploaded, you can start searching through your messages using the <a asp-controller="Search" asp-action="Index">Search</a> page. Simply enter your query, and ConvoSeek will find the relevant messages for you.
+    </p>
+
+    <h3>Need Help?</h3>
+    <p>
+        If you encounter any issues or have questions, please refer to the provided links or contact our support team for assistance.
+    </p>
+</div>
