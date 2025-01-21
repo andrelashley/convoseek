@@ -23,19 +23,6 @@ namespace ConvoSeekBackend.Controllers
             _userManager = userManager;
         }
 
-        /*
-         *  public async Task<IActionResult> Index()
-        {
-            var user = await _userManager.FindByNameAsync(User!.Identity!.Name);
-            if (user.IsSubscriptionActive == true) return RedirectToAction(nameof(AlreadySubscribed));
-
-            ViewBag.PriceId = _config["StripePriceId"];
-
-            return View();
-        }
-         * 
-         */
-
         public async Task<IActionResult> Index()
         {
             var currentUser = await _userManager.FindByEmailAsync(User.Identity!.Name!);

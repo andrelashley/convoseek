@@ -36,8 +36,20 @@ namespace ConvoSeekBackend.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("Index")]
-        public ActionResult Index() => View();
+        [HttpGet]
+        [Route("Search")]
+        [Route("Search/Index")]
+        public async Task<IActionResult> Index()
+        {
+            var currentUser = await _userManager.GetUserAsync(User);
+
+            if (currentUser == null || !currentUser.IsSubscriptionActive)
+            {
+                ViewData["ShowSubscriptionAlert"] = true;
+            }
+
+            return View();
+        }
 
         [HttpGet("Search/Query")]
         public async Task<IActionResult> Query([FromQuery] string q = "")
@@ -54,7 +66,7 @@ namespace ConvoSeekBackend.Controllers
                 _logger.LogError($"Search error: {ex.Message}");
                 return StatusCode(500);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError($"Unexpected error: {ex.Message}");
                 return StatusCode(500);

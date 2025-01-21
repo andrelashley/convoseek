@@ -4,6 +4,14 @@
     ViewData["Title"] = "Upload Messages";
 }
 
+@if (ViewData["ShowSubscriptionAlert"] != null && (bool)ViewData["ShowSubscriptionAlert"])
+{
+    <div class="alert alert-warning">
+        You need an active subscription to access this feature.
+        <a asp-controller="Billing" asp-action="Index">Subscribe Now</a>
+    </div>
+}
+
 <h1 class="text-center mt-4">Upload Messages</h1>
 
 <div class="container mt-5">
@@ -17,26 +25,30 @@
 
                 <div class="d-flex justify-content-center gap-3 mt-3">
                     <!-- WhatsApp Upload Button -->
-                    <button id="WhatsAppUploadButton" type="button" class="btn btn-primary">
+                    <button id="WhatsAppUploadButton"
+                            type="button"
+                            class="btn btn-primary"
+                    @(ViewData["ShowSubscriptionAlert"] != null && (bool)ViewData["ShowSubscriptionAlert"] ? "disabled" : "")>
                         <i class="bi bi-whatsapp"></i> Import WhatsApp Data
                     </button>
 
                     <!-- Facebook Messenger Upload Button -->
-                    <button id="FacebookUploadButton" type="button" class="btn btn-secondary">
+                    <button id="FacebookUploadButton"
+                            type="button"
+                            class="btn btn-secondary"
+                    @(ViewData["ShowSubscriptionAlert"] != null && (bool)ViewData["ShowSubscriptionAlert"] ? "disabled" : "")>
                         <i class="bi bi-facebook"></i> Import Facebook Messenger Data
                     </button>
                 </div>
             </form>
 
             <div class="progress mt-4" style="height: 20px;">
-                <div
-                    class="progress-bar progress-bar-striped progress-bar-animated"
-                    role="progressbar"
-                    aria-valuenow="0"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    style="width: 0%;">
-                </div>
+                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                     role="progressbar"
+                     aria-valuenow="0"
+                     aria-valuemin="0"
+                     aria-valuemax="100"
+                     style="width: 0%;"></div>
             </div>
 
             <div class="text-center mt-3">

@@ -4,11 +4,23 @@
     ViewData["Title"] = "Search";
 }
 
+@if (ViewData["ShowSubscriptionAlert"] != null && (bool)ViewData["ShowSubscriptionAlert"])
+{
+    <div class="alert alert-warning">
+        You need an active subscription to access this feature.
+        <a asp-controller="Billing" asp-action="Index">Subscribe Now</a>
+    </div>
+}
+
 <h2>Search Messages</h2>
 
 <div id="search-container">
     <input type="text" id="search-query" placeholder="Enter your query..." class="form-control" />
-    <button id="search-btn" class="btn btn-primary mt-2">Search</button>
+    <button id="search-btn"
+            class="btn btn-primary mt-2"
+    @(ViewData["ShowSubscriptionAlert"] != null && (bool)ViewData["ShowSubscriptionAlert"] ? "disabled" : "")>
+        Search
+    </button>
 </div>
 
 <div id="search-result" class="mt-4">
@@ -20,29 +32,38 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            $('#search-btn').on('click', function () {
-                const query = $('#search-query').val().trim();
+            const searchButton = $('#search-btn');
+            const searchQuery = $('#search-query');
+            const answerBox = $('#answer-box');
+            const errorBox = $('#error-box');
 
-                if (!query) {
-                    $('#answer-box').hide();
-                    $('#error-box').text('Please enter a query.').show();
+            searchButton.on('click', function () {
+                if (searchButton.is(':disabled')) {
+                    alert('You need an active subscription to perform a search.');
                     return;
                 }
 
-                // Clear previous results
-                $('#answer-box').hide();
-                $('#error-box').hide();
+                const query = searchQuery.val().trim();
+
+                if (!query) {
+                    answerBox.hide();
+                    errorBox.text('Please enter a query.').show();
+                    return;
+                }
+
+                answerBox.hide();
+                errorBox.hide();
 
                 $.ajax({
                     url: '/Search/Query',
                     method: 'GET',
                     data: { q: query },
                     success: function (response) {
-                        $('#answer-box').text(response).show();
+                        answerBox.text(response).show();
                     },
                     error: function (xhr) {
                         const errorMessage = xhr.responseJSON?.error || 'An error occurred while processing your request.';
-                        $('#error-box').text(errorMessage).show();
+                        errorBox.text(errorMessage).show();
                     }
                 });
             });
