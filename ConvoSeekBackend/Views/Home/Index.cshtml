@@ -4,10 +4,62 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">Get Started</button>
+<style>
+    .hero {
+        background: linear-gradient(to right, #007bff, #6610f2);
+        color: white;
+    }
+
+        .hero h1 {
+            color: #fff;
+        }
+
+    .features .feature-icon {
+        font-size: 3rem;
+    }
+
+    .features h5 {
+        margin-top: 1rem;
+    }
+</style>
+
+
+<!-- Hero Section -->
+<div class="hero bg-light text-center py-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Unlock Insights from Your Conversations</h1>
+        <p class="lead">Search smarter, organize better, and understand more with ConvoSeek.</p>
+        <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#loginModal">Get Started</button>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="features bg-white py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-search fs-1 text-primary"></i>
+                </div>
+                <h5 class="fw-bold">Powerful Search</h5>
+                <p class="text-muted">Quickly find the exact message you're looking for across all your conversations.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-shield-lock fs-1 text-primary"></i>
+                </div>
+                <h5 class="fw-bold">Privacy First</h5>
+                <p class="text-muted">Your data is encrypted and secure. We prioritize your privacy.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-icon mb-3">
+                    <i class="bi bi-lightbulb fs-1 text-primary"></i>
+                </div>
+                <h5 class="fw-bold">AI-Powered Insights</h5>
+                <p class="text-muted">Uncover trends, topics, and connections within your chats using AI.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal -->
@@ -21,13 +73,13 @@
             <div class="modal-body">
                 <form asp-controller="Account" asp-action="Login" method="post">
                     <div class="mb-3">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email" class="form-control" id="emailInput" placeholder="Email Address">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <input asp-for="Email" class="form-control" id="emailInput" placeholder="Enter your email">
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
-                        <label asp-for="Password" class="form-label"></label>
-                        <input asp-for="Password" class="form-control" id="passwordInput" placeholder="Password" type="password">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input asp-for="Password" class="form-control" id="passwordInput" placeholder="Enter your password" type="password">
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 mt-4">Log In</button>
