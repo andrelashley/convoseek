@@ -20,3 +20,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+@media (max-width: 768px) {
+    .video-demo .row {
+        flex-direction: column;
+    }
+
+    .video-container {
+        margin-bottom: 2rem;
+    }
+}

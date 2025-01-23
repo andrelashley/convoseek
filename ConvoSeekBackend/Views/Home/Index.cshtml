@@ -10,9 +10,9 @@
         color: white;
     }
 
-        .hero h1 {
-            color: #fff;
-        }
+    .hero h1 {
+        color: #fff;
+    }
 
     .features .feature-icon {
         font-size: 3rem;
@@ -21,8 +21,35 @@
     .features h5 {
         margin-top: 1rem;
     }
-</style>
 
+    .video-demo {
+        background-color: #f8f9fa;
+        padding: 3rem 0;
+    }
+
+        .video-demo .videos-row {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Adjust gap between videos */
+        }
+
+    .video-container {
+        text-align: center;
+        max-width: 300px; /* Limit individual video width */
+    }
+
+        .video-container video {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-container h6 {
+            margin-top: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+</style>
 
 <!-- Hero Section -->
 <div class="hero bg-light text-center py-5">
@@ -57,6 +84,31 @@
                 </div>
                 <h5 class="fw-bold">AI-Powered Insights</h5>
                 <p class="text-muted">Uncover trends, topics, and connections within your chats using AI.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video Demo Section -->
+<div class="video-demo py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">See ConvoSeek in Action</h2>
+        <div class="videos-row">
+            <!-- Video 1 -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="~/videos/step-1.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <h6>Step 1: Upload Conversations</h6>
+            </div>
+            <!-- Video 2 -->
+            <div class="video-container">
+                <video controls autoplay muted loop>
+                    <source src="~/videos/step-2.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <h6>Step 2: Explore and Search</h6>
             </div>
         </div>
     </div>
